@@ -1,76 +1,56 @@
-from dotenv import load_dotenv
+# app/main.py
+
+from app.controller.stackchan_controller import StackchanController
+from app.client.input_provider import InputProvider
 from app.client.google_client import GoogleAIClient
-from app.client.trello_client import TrelloClient
 from app.client.voicevox_client import speak
-from app.service.person_detector import PersonDetector
 from app.service.task_manager import TaskManager
 from app.service.conversation_manager import ConversationManager
+from app.client.trello_client import TrelloClient
 from app.service.reminder_service import ReminderService
+from dotenv import load_dotenv
 import os
-
-load_dotenv()
-
-speak("こんにちは！ぼくはスタックチャンだよ！")
-
-class InputProvider:
-    def get_input(self) -> str:
-        raise NotImplementedError
-
-class ConsoleInputProvider(InputProvider):
-    def get_input(self) -> str:
-        return input("あなた: ")
-
+import time
 
 def main():
-    GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
-    TRELLO_API_KEY = os.environ.get("TRELLO_API_KEY")
-    TRELLO_API_TOKEN = os.environ.get("TRELLO_API_TOKEN")
-    TODO_LIST_ID = os.environ.get("TODO_LIST_ID")
-    DONE_LIST_ID = os.environ.get("DONE_LIST_ID")
-    DOING_LIST_ID = os.environ.get("DOING_LIST_ID")
+    load_dotenv()
+    google_api_key = os.environ.get("GOOGLE_API_KEY")
+    trello_api_key = os.environ.get("TRELLO_API_KEY")
+    trello_token = os.environ.get("TRELLO_API_TOKEN")
+    # 追加でリストIDを読み取る
+    todo_list_id = os.environ.get("TRELLO_TODO_LIST_ID")
+    done_list_id = os.environ.get("TRELLO_DONE_LIST_ID")
+    doing_list_id = os.environ.get("TRELLO_DOING_LIST_ID")
 
-    client = GoogleAIClient(api_key=GOOGLE_API_KEY)
-    input_provider = ConsoleInputProvider()
-    history = []
+
+    trello_client = TrelloClient(trello_api_key, trello_token)
 
     # 各種クライアント・サービス初期化
-    trello_client = TrelloClient(api_key=TRELLO_API_KEY, token=TRELLO_API_TOKEN)
+    input_provider = InputProvider()
+    ai_client = GoogleAIClient(google_api_key)
     task_manager = TaskManager(trello_client)
-    person_detector = PersonDetector()
-    conversation_manager = ConversationManager(task_manager, TODO_LIST_ID, DONE_LIST_ID, DOING_LIST_ID)
+    conversation_manager = ConversationManager(ai_client, todo_list_id, done_list_id, doing_list_id)
 
-    # リマインダーサービス開始
-    reminder_service = ReminderService(task_manager, TODO_LIST_ID)
+    # スタックチャンのコントローラを作成
+    controller = StackchanController(task_manager, conversation_manager)
+
+    reminder_service = ReminderService(task_manager, todo_list_id)
     reminder_service.start()
 
-    print("=== スタックチャンと会話開始！ ===")
+    print("=== スタックチャン起動完了！会話を開始します ===")
+
     while True:
-        user_input = input("あなた: ")
+        # ユーザー入力を取得
+        user_input = input_provider.get_input()
 
-        # まず /detect コマンドを見つけたら人認識イベントを発火
-        detected_person = person_detector.detect_person(user_input)
-        if detected_person:
-            conversation_manager.start_conversation(detected_person)
-            person_detector.reset()
-            continue
+        # 入力をコントローラに渡す
+        controller.handle_input(user_input)
 
-        if user_input.lower() in ["exit", "quit", "bye"]:
-            print("スタックチャン: またね！👋")
-            speak("またね！")
-            break
+        # 時間経過など内部処理を進める
+        controller.tick()
 
-        # 通常の自由会話（今まで通り）
-        # （ここは既存のChatAPI client.send_message() 呼び出しに接続してもOK）
-
-        history.append({"role": "user", "content": user_input})
-        response = client.send_message(history)
-        bot_message = response["content"]
-
-        print(f"スタックチャン: {bot_message}")
-        history.append({"role": "model", "content": bot_message})
-
-        print(bot_message)
-        speak(bot_message)
+        # 少しsleep（高頻度で回さないため）
+        time.sleep(0.5)
 
 if __name__ == "__main__":
     main()
