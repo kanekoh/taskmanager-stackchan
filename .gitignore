@@ -2,3 +2,12 @@
 *.wav
 venv
 tmp/
+# python
+__pycache__/
+*.py[cod]
+# env
+.env
+# poetry
+poetry.lock
+# misc
+*.DS_Store

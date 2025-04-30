@@ -1,128 +1,81 @@
-# Stackchan Task Assistant
+# Stack-chan Educational Task Assistant – Roll-out Plan  
+_Last updated : 2025-04-30_
 
-スタックチャンがあなたのタスクを管理してくれるアシスタントプロジェクトです！  
-人を認識すると、Trelloに登録された今日のタスクを教えてくれます。
-
----
-
-## ✨ 特徴
-
-- 人を認識して自動で挨拶＆タスクを確認
-- Trelloと連携してタスクの状態管理（完了・実施中に移動）
-- タスク予定時間が近づくと自動リマインド
-- VOICEVOXを使ってスタックチャンが音声で喋る
-- これから状態管理型（State Machine）に進化予定
+## 0. Why this file?
+We want a single, living plan that shows **what to buy, when to buy it, and what to build next**.  
+Copy / edit dates freely as velocity changes.
 
 ---
 
-## 🛠 システム構成
+## 1. Shopping list & timing
 
-```plaintext
-スタックチャン
-  ↓
-  Pythonアプリ
-    - Trello API
-    - VOICEVOX API
-  ↓
-  Trelloでタスク管理
+| When to order | Part | Notes | Rough cost (JPY) |
+|---------------|------|-------|------------------|
+| **Week 1** (today) | **Raspberry Pi 5 (8 GB)** | Core dev host; long delivery lead-time. | ¥15 000 |
+| Week 1 | 32 GB micro-SD + USB-C 30 W PSU | Boot + head-room for images. | ¥3 000 |
+| Week 3 | Active cooling HAT for Pi 5 | Keeps Whisper/TTS fast. | ¥2 000 |
+| **Week 4** (after Phase 2 works) | **Stack-chan kit** (M5Stack Core 3 + Servo Pack) | Firmware supports MQTT out-of-box. | ¥14 000 |
+| Week 4 | Small external speaker (3 W USB) | Louder voice if needed. | ¥1 000 |
+| Optional (Week 6+) | Presence sensor of choice<br>  • Pi Camera v3 **or**<br>  • Velostat pressure pad kit | Enables “child is at desk” feature. | ¥3 000–6 000 |
+| Optional (Week 6+) | USB M.2 SSD (128 GB) | Faster swap if you try 13 B models. | ¥6 000 |
+
+*Add parts as rows when new concepts arise.*
+
+---
+
+## 2. Development calendar (first 8 weeks)
+
+| Week | Phase / Milestone | Key deliverables |
+|------|------------------|------------------|
+| **1** | **Phase 0 – Repo skeleton** | `poetry init`, pre-commit, `.env.example`, CI green. |
+| 1–2 | **Phase 1 – Trello ☞ SQLite sync** | FastAPI `/trello`, unit tests passing. |
+| 2–3 | **Phase 2 – Scheduler** | APScheduler fires console reminders on Mac. |
+| 3 | **Phase 3 – Slack outbound** | Slack DM shows reminders; Pi 5 should have arrived – flash OS & deploy. |
+| **4** | **Phase 4 – Stack-chan bridge** | Order Stack-chan; MQTT loop proven with `mosquitto_pub`. |
+| 4–5 | Stack-chan assembly & firmware flash | Robot says “Hello World” from Pi. |
+| 5 | End-to-end demo | Trello → Robot → Button → Slack ✅ |
+| **6** | **Presence sensor POC (optional)** | One method (camera _or_ seat pad) publishes `presence/desk`. |
+| 6–7 | **/plan add** Slack command + Plan table | Robot can talk about weekend zoo trip. |
+| 7–8 | Daily summariser for friend mentions | Vector search returns top-k facts to dialog manager. |
+
+_If hardware shipping slips, keep coding phases unblocked on laptop._
+
+---
+
+## 3. Weekly checklist template
+
+Copy this into GitHub Issues (milestone = week **n**) or into ChatGPT when you need focus.
+
+### Week <N> goals
+- [ ] Finish <phase / module>
+- [ ] Write / update unit tests
+- [ ] Manual test: <scenario>
+- [ ] Update README progress bar
+- [ ] Decide if BOM changes are required
+
+## 4. Progress badge (markdown copy-paste)
+
+**Roadmap status**  
+Phase 0 ███░░░░░░  
+Phase 1 ████░░░░░  
+Phase 2 ██░░░░░░░  
+Phase 3 ░░░░░░░░░  
+Phase 4 ░░░░░░░░░  
+Update the blocks █ each Friday.
+
+## 5. Next decisions list
+Which presence sensor—camera (software-only) or pressure pad (hardware)?
+
+Local Llama 8 B vs cloud GPT for dialog fallback?
+
+Long-term store: stick with SQLite or migrate to Postgres once Phase 6 lands?
+
+Tip for future ChatGPT prompts
+Paste a single checklist or table row above and say
+“Expand Week 5 checklist into step-by-step shell commands and sample code.”
+That keeps the assistant focused on the exact sub-task.
+
 ```
-
----
-
-## ⚙️ セットアップ
-
-1. Python 3.12 環境を用意
-2. 仮想環境を作成してアクティベート
-
-```bash
-python -m venv venv
-source venv/bin/activate  # Windowsなら venv\Scripts\activate
+Feel free to drop this verbatim into `README.md`; adjust dates and prices to match local suppliers.  
+This gives you a clear purchase queue **and** a week-by-week dev guide that ChatGPT can zoom in on later.
 ```
-
-3. ライブラリをインストール
-
-```bash
-pip install -r requirements.txt
-```
-
-4. `.env`ファイルを作成して、以下を記入
-
-```
-TRELLO_API_KEY=あなたのTrello APIキー
-TRELLO_API_TOKEN=あなたのTrelloトークン
-TRELLO_TODO_LIST_ID=タスク追加用リストID
-TRELLO_DOING_LIST_ID=作業中リストID
-TRELLO_DONE_LIST_ID=完了リストID
-```
-
-5. VOICEVOXエンジンを起動
-
-```bash
-# 例
-docker run --rm -p 50021:50021 voicevox/voicevox_engine
-```
-またはローカルで起動しておきます。
-
----
-
-## 🚀 起動方法
-
-```bash
-python -m app.main
-```
-
-スタックチャンが起動し、待機状態になります！
-
-- `/detect {名前}` を入力すると認識トリガー
-- Trelloからタスクを取得して対話を開始します
-- タスクが残っていれば、やったか？いつやるか？を聞いてきます
-
----
-
-## 🚀 使い方（基本フロー）
-/detect {名前} と入力して、スタックチャンに認識させます
-
-スタックチャンが挨拶し、Trelloから対象ユーザーのタスクを取得します
-
-各タスクについて「完了？」「実施中？」「いつやる？」を対話形式で確認します
-
-タスク予定時間入力は、以下のように柔軟に対応しています
-
-- 18
-- 18:30
-- 18時
-- 18時30分
-- 午後3
-- 午前9時30分
-
-すべてのタスクを処理すると、スタックチャンは通常の自由会話モード（Free Talk）に移行します
-
-DueDateに近づいたタスクは、リマインダーによってスタックチャンから声がかかります
-
-リマインダーはPCローカル時間を基準に判定されます
-
----
-
-## ⚠️ 注意事項
-
-- `.env`ファイルは必ず`.gitignore`に追加して、GitHubに公開しないようにしてください
-- Trelloの各リストIDが正しいことを確認してください
-- VOICEVOXエンジンを起動してからアプリを実行してください
-- スタックチャンの自由会話モードを使用する場合、ChatAPIクライアント設定も必要です
-
----
-
-## 🌟 今後の拡張予定
-
-- 状態管理（State Machine）をベースにリファクタリング
-- 雑談の中にタスク確認を自然に挟む自然会話モード
-- タスク登録やタスク完了報告の自動化
-- Slack連携、センサー連動も検討
-
----
-
-# 📢 ライセンス・免責事項
-
-- 本プロジェクトは個人利用・学習目的に作成されています。
-- Trello API、VOICEVOX APIの利用規約に従ってご利用ください。
-
