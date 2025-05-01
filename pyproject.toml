@@ -15,7 +15,9 @@ dependencies = [
     "pydantic (>=2.11.4,<3.0.0)",
     "python-dotenv (>=1.1.0,<2.0.0)",
     "sqlmodel (>=0.0.24,<0.0.25)",
-    "pytest (>=8.3.5,<9.0.0)"
+    "pytest (>=8.3.5,<9.0.0)",
+    "python-dateutil (>=2.9.0.post0,<3.0.0)",
+    "apscheduler (>=3.11.0,<4.0.0)"
 ]
 
 [tool.poetry]
@@ -26,7 +28,14 @@ black = "^25.1.0"
 isort = "^6.0.1"
 pre-commit = "^4.2.0"
 pytest-cov = "^6.1.1"
+pytest-asyncio = "^0.26.0"
+httpx = "^0.28.1"
+pytest = "^8.3.5"
+pytest-mock = "^3.14.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "session"
