@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v3
@@ -24,6 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install poetry
           poetry install --no-interaction --no-ansi
+          poetry run pip install flake8  # Add this line
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names

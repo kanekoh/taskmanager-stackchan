@@ -9,7 +9,6 @@ BEFORE_SEC  = int(os.getenv("REMIND_BEFORE_SEC", 300))
 BEFORE = BEFORE_SEC
 WINDOW_SEC  = int(os.getenv("REMIND_WINDOW_SEC", 60))
 SLACK_TOKEN = os.getenv("SLACK_BOT_TOKEN")
-SLACK_USER_ID = os.getenv("SLACK_TARGET_USER_ID")
 SLACK_CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
 slack_client = WebClient(token=SLACK_TOKEN) if SLACK_TOKEN else None
 
