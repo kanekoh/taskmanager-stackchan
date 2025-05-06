@@ -57,7 +57,7 @@ Copy this into GitHub Issues (milestone = week **n**) or into ChatGPT when you n
 
 **Roadmap status**  
 Phase 0 ███░░░░░░  
-Phase 1 ████░░░░░  
+Phase 1 ██████████
 Phase 2 ██░░░░░░░  
 Phase 3 ░░░░░░░░░  
 Phase 4 ░░░░░░░░░  
@@ -74,8 +74,6 @@ Tip for future ChatGPT prompts
 Paste a single checklist or table row above and say
 “Expand Week 5 checklist into step-by-step shell commands and sample code.”
 That keeps the assistant focused on the exact sub-task.
+```
 
-```
-Feel free to drop this verbatim into `README.md`; adjust dates and prices to match local suppliers.  
-This gives you a clear purchase queue **and** a week-by-week dev guide that ChatGPT can zoom in on later.
-```
+

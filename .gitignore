@@ -11,3 +11,4 @@ __pycache__/
 poetry.lock
 # misc
 *.DS_Store
+*.db

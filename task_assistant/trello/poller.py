@@ -5,8 +5,8 @@ from ..db.dao import upsert_task, session
 from ..db.models import Meta  # store cursor here
 import logging
 
-KEY   = os.getenv("TRELLO_KEY")
-TOKEN = os.getenv("TRELLO_TOKEN")
+KEY   = os.getenv("TRELLO_API_KEY")
+TOKEN = os.getenv("TRELLO_API_TOKEN")
 BOARD = os.getenv("TRELLO_BOARD_ID")
 BASE  = "https://api.trello.com/1"
 
