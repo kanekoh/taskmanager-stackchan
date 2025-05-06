@@ -70,10 +70,28 @@ Local Llama 8 B vs cloud GPT for dialog fallback?
 
 Long-term store: stick with SQLite or migrate to Postgres once Phase 6 lands?
 
+
+6. LLM + MQTT Based Task Assistant Design (Without Stack-chan)
+
+Focusing on LLM (Llama3 8B via Ollama) and MQTT (Mosquitto), we will build a task assistant that combines
+instructions to Stack-chan, voice file conversion, and facial expression control.
+
+    * Components:
+        * MQTT Broker (Mosquitto)
+        * LLM (Llama3 8B via Ollama)
+        * NLU Module
+        * DM Module
+        * NLG Module
+        * TTS Module
+        * Task Management Module
+        * Client
+
+    * Message Flow: (Add details later)
+
+    * MQTT Topic Design: (Add details later)
+
 Tip for future ChatGPT prompts
 Paste a single checklist or table row above and say
 “Expand Week 5 checklist into step-by-step shell commands and sample code.”
 That keeps the assistant focused on the exact sub-task.
 ```
-
-
