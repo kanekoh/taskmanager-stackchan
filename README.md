@@ -95,3 +95,4 @@ Paste a single checklist or table row above and say
 “Expand Week 5 checklist into step-by-step shell commands and sample code.”
 That keeps the assistant focused on the exact sub-task.
 ```
+
